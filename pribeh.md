@@ -1,0 +1,15 @@
+# Příběhový rámec cvičení
+## Útok přes podvržený e-mail, krádež účtu a exfiltrace dat
+Firma XYZ je středně velká společnost poskytující servisní služby po celé ČR. Zaměstnanci často pracují mimo kancelář a připojují se přes firemní VPN. Oddělení, které spravuje mobilní tarify, si všimlo abnormální spotřeby mobilních dat u jednoho servisního technika - během jediného měsíce třikrát vyčerpal FUP. Spotřeba dat byla neobvykle vysoká vzhledem k běžné pracovní činnosti. Technolog byl proto dotázán, zda streamuje filmy nebo sleduje TV, ale popřel jakékoli soukromé využití. Uvedl, že hotspot na mobilním telefonu používá pouze pro pracovní připojení notebooku ke firemní VPN na cestách, doma je na Wi‑Fi.
+
+Notebook byl proto dočasně odebrán k analýze. Síťové logy naznačily, že z notebooku probíhá VPN připojení i ve večerních hodinách a o víkendech, kdy zaměstnanec obvykle nepracuje. Správci si všimli nápadné aktivity vůči firemnímu NAS (Network Attached Storage – síťové úložiště), kde má zaměstnanec namapované sdílené složky pod svým účtem. V logu NAS se vyskytovaly velké objemy stahování a odesílání dat mimo běžný pracovní režim.
+
+Dodatečné šetření e‑mailové schránky ukázalo nedávný e‑mail údajně od „Microsoftu“ vyzývající k aktualizaci. Adresa odesílatele byla vizuálně velmi podobná legitimní doméně, ale obsahovala znaky, které vypadaly jako písmeno „o“ – ve skutečnosti však šlo o písmena z cizí znakové sady (Cyrilice). Zaměstnanec klikl na odkaz a dostal se na podvržený web, kde zadal své přihlašovací údaje (uživatelské jméno a heslo). Tím útočník získal legitimní přístup do firemních služeb. Součástí e‑mailu byl navíc škodlivý prvek, který nastavil automatické přeposílání kontaktům v adresáři – tím se podvod rychle šířil dál.
+
+Analýza síťového provozu odhalila, že útočník navázal spojení přes stejný VPN profil, který používá zaměstnanec, a následně přistupoval k NAS přes protokol SMB. Aktivita zahrnovala průzkum sdílených složek, kopírování dokumentů a postupnou exfiltraci přes VPN. 
+
+Z pohledu infrastruktury firma provozuje Active Directory, ale bezpečnostní investice byly minimální: neexistoval centrální EDR, chyběla povinná MFA, bezpečnostní správa byla rozdělena mezi neškolené zaměstnance a monitoring byl základní.
+
+Na kompromitovaném notebooku se našly artefakty nasvědčující pokusu o perzistenci: podezřelé položky v Run klíčích registru, naplánované úlohy  a modifikovaný spouštěcí skript. Útočník zřejmě využil získané přihlašovací údaje k přihlášení a následně se snažil udržet přístup i po restartu zařízení. V doméně se objevily neobvyklé pokusy o přihlášení k dalším účtům, a zdá se, že došlo k laterálnímu pohybu pomocí protokolu RDP a PSExec.
+
+Cvičení je zasazeno do této reality: účastníci obdrží vzorky síťového provozu PCAP, obraz kompromitované Windows VM a přístup k testovací AD doméně s uloženými záznamy událostí. Jejich úkolem je krok za krokem odhalit klíčové artefakty, zmapovat průběh útoku od phishingu až po exfiltraci, identifikovat perzistenci na Windows hostu, a nakonec bezpečně obnovit důvěru v kompromitované účty v doméně.
